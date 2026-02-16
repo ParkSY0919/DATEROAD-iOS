@@ -9,42 +9,27 @@
 
 <br>
 
-## 🩷 소개
+## 프로젝트 정보
 
-> 💡 About 데이트로드
-> 
-> - 서비스 소개
->   - 커플들이 직접 공유하는 ‘장소 중심’이 아닌 ‘코스 중심’ 데이트 코스 공유 서비스
->
-> - 개발 인원
->   - 14인 프로젝트 | 기획(2) · 디자인(2) · 서버(3) · iOS(4) · AOS(3)
->
-> - 개발 기간
->   - 집중 기간: 2024.06 - 2024.07 (4주, iOS 4인)
->   - 유지보수 기간: 2024.12 - 현재 (진행 중, iOS 3인)
+| 항목 | 내용 |
+| --- | --- |
+| 1차 스프린트 | 집중 기간: 2024.06 - 2024.07 (4주, iOS 4인) |
+| 2차 스프린트 | 집중 기간: 2024.12 - 2025.02 (3주, iOS 3인) |
+| 인원 | iOS 4인 협업에서 코스 등록/일정 등록 영역 등 담당 |
+| 버전 | iOS 15.0+, Swift 5.0 |
+| 기술 스택 | UIKit, MVVM, Custom Observable(ObservablePattern), Moya, SnapKit, Then, PHPickerViewController, Amplitude-Swift |
 
-<br>
 
-## 🩷 About Developers
+## 주요 기능
 
-| [윤희슬](https://github.com/seuriseuljjeok)                                                              | [박신영](https://github.com/ParkSY0919)                                                                  | [김민서](https://github.com/kms0233)                                                                     | [이수민](https://github.com/cirtuare)                                                                    |
-| -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| <img src="https://github.com/user-attachments/assets/db4de1ef-d419-47cf-8561-eeb22fe88c1d" width="250"/> | <img src="https://github.com/user-attachments/assets/6e6aa930-c78f-4de7-966d-972b799123a0" width="250"/> | <img src="https://github.com/user-attachments/assets/341e8a75-fcd6-4203-9d38-68e2881fe3fd" width="250"/> | <img src="https://github.com/user-attachments/assets/c70a168b-32b7-4cbe-9456-3f2e7400c071" width="250"/> |
-| <p align="center">`온보딩/로그인`<br>`메인 화면 & 마이페이지`</p>                                        | <p align="center">`코스 등록/불러오기`<br>`일정 등록/불러오기`</p>                                       | <p align="center">`코스 상세`<br>`코스 둘러보기 & 하단 탭바`</p>                                         | <p align="center">`데이트 일정`<br>`포인트 내역 & 내가 열람한 코스`</p>                                  |
-
-<br>
-
-## 🩷 주요 기능
-
-> 💡 협업 프로젝트의 담당 기능은 **Bold** 및 ✅ 표시하였습니다.
->
-> - 소셜로그인 기능 (애플, 카카오)
-> - **코스 등록 및 불러오기 ✅**
-> - **일정 등록 및 불러오기 ✅**
-> - 코스 목록 조회 (지역, 가격 필터링)
-> - 카카오톡 공유 기능 (데이트 일정)
-> - 프로필 관리 기능
-> - 포인트 시스템 (코스 등록 및 열람으로 포인트 획득/사용 등)
+| 기능명 | 설명 |
+| --- | --- |
+| 코스 등록 3단계(AddCourse 1~3) | 이미지, 기본 정보, 장소 리스트, 상세 설명/비용을 단계적으로 검증하고 등록합니다. |
+| 일정 등록 2단계(AddSchedule 1~2) | 기본 정보와 장소 리스트를 분리해 입력하고 완료 시 서버에 등록합니다. |
+| 장소 검색 연동(Search Place) | 장소 검색 결과에서 선택한 장소명/주소를 등록 폼에 바인딩합니다. |
+| 장소 순서 편집(Drag & Drop) | 등록한 장소를 드래그 앤 드롭으로 재정렬하고 서버 요청 순서(sequence)에 반영합니다. |
+| 이미지 업로드 및 대표 이미지 지정 | 최대 10장 선택, 대표 썸네일 선택, JPEG 압축 후 multipart 업로드를 처리합니다. |
+| 토큰 만료 재시도(Reissue) | 등록 API가 401을 반환하면 토큰 재발급 후 동일 흐름을 재시도합니다. |
 
 #### 1️⃣ 코스 등록하기 및 열람
 
@@ -67,23 +52,82 @@
 
 <br>
 
-## 🩷 기술 스택 및 내용
+## 아키텍처
 
-> Framework: `UIKit`, `AuthenticationServices`
->
-> Architecture: `MVVM`
->
-> Design Patterns: `API Router`, `DI/DIP`, `Facade`, `POP`, `Repository`, `Singleton`
->
-> Reactive Programming: `Custom Observable Pattern`
->
-> Library: `Moya`, `Amplitude-Swift`, `KakaoSDK`, `Kingfisher`, `Lottie`, `SnapKit`, `Then` ..
+```mermaid
+flowchart LR
+  A[AddCourse / AddSchedule ViewController] --> B[ViewModel]
+  B --> C[ObservablePattern 바인딩]
+  C --> D[입력 검증 및 버튼 상태 제어]
+  D --> E[NetworkService]
+  E --> F[AddCourseService / AddScheduleService]
+  F --> G[Moya TargetType]
+  G --> H[API]
 
-- 데이트 코스 및 일정 추가 기능에서 사용자 입력 데이터(코스명, 방문 장소, 소요시간 등)의 변화를 실시간으로 감지하고 UI를 자동으로 업데이트하는 반응형 시스템을 구현했습니다. 특히 AddCourseViewModel과 AddScheduleViewModel에서 입력값 검증과 실시간 UI 상태 관리에 효과적이었습니다.
-- Moya와 API Router를 활용해 Endpoint를 명확히 정의하고, BaseService 상속 구조를 통해 공통 네트워크 로직을 재사용했습니다. 이를 통해 토큰 갱신과 에러 처리를 일관되게 구현하여 안정성을 확보했습니다.
-- Facade Pattern과 Repository Pattern을 활용해 비즈니스 로직 및 데이터 접근 로직을 명확히 분리하여 코드 유지보수성을 향상시켰습니다.
-- Serviceable, TimeRequireProtocol 등의 프로토콜을 활용해 공통 요소를 추상화하고, 새로운 기능 추가 시 코드 재사용성을 높였습니다.
-- API 통신이 필요한 기능에서 토큰 만료 시 자동 갱신 메커니즘을 구현하여 사용자 경험 단절 없이 서비스 이용이 가능하도록 했습니다.
-- CustomObservable의 lazyBind를 통해 데이터 집약적 작업이 발생하는 일정 등록 및 불러오기 화면에서 불필요한 UI 업데이트를 방지하고 성능을 개선했습니다.
-- PHPickerViewController로 데이트 코스 등록 시 다중 이미지 선택과 대표 썸네일 지정 기능을 구현했습니다. 선택된 썸네일은 시각적으로 구분되도록 UI를 설계했으며, 모든 이미지는 JPEG 압축을 통해 업로드 효율성을 최적화했습니다.
-- UICollectionViewDragDelegate와 DropDelegate를 이용해 데이트 코스 순서를 직관적으로 재배치할 수 있는 드래그 앤 드롭 기능을 구현했습니다. 드래그 시 둥근 모서리와 투명 배경으로 시각적 피드백을 제공하고, 드롭 완료 시 데이터 소스와 UI가 즉시 동기화되도록 처리했습니다. 추가로 편집 모드를 통해 아이템 삭제와 이동을 더욱 편리하게 만들었습니다.
+  H -->|401| I[BaseService.reIssueJWT]
+  I --> J[Serviceable.patchReissue]
+  J --> K[토큰 갱신 후 재시도]
+```
+
+## 기술적 도전과 해결
+
+### 1. 단계별 입력 검증 게이팅(Validation Gating) - 6개/5개/2개 조건
+코스 등록과 일정 등록이 다단계 폼(Multi-step Form)으로 구성되어 있기 때문에, 각 단계에서 필수 입력이 빠진 상태로 다음 단계로 넘어가면 잘못된 데이터가 누적되고 수정 비용이 커지는 문제가 있었습니다. 그래서 각 입력값 변화를 즉시 감지하면서도 단계 단위로 완료 조건을 합산하도록 설계했습니다.
+
+**해결 방향:**
+- ObservablePattern(ObservablePattern)의 `bind`/`lazyBind`로 텍스트, 날짜, 태그, 지역, 장소 수를 실시간 반영했습니다.
+- `isOkSixBtn`, `isEnableNextButton`, `isSourceMoreThanOne`로 단계별 완료 조건을 분리하고 버튼 활성화를 일관되게 제어했습니다.
+- ViewModel에서 검증 상태를 발행하고 View는 스타일만 반영하도록 역할을 분리했습니다.
+
+> 코스 1단계는 6개 입력, 일정 1단계는 5개 입력, 2단계는 최소 2개 장소를 만족할 때만 다음/완료 버튼이 활성화되도록 구성했습니다.
+
+### 2. 장소 재정렬과 서버 순서 동기화(Order Consistency) - 드래그 이동 즉시 반영
+장소 편집에서 화면 순서(UI Order)만 바뀌고 데이터 순서(Data Order)가 유지되면, 사용자가 의도한 동선과 서버 저장 순서가 달라지는 문제가 발생할 수 있기 때문에 재정렬 시점에 데이터와 UI를 함께 갱신해야 했습니다.
+
+**해결 방향:**
+- `UICollectionViewDragDelegate`와 `UICollectionViewDropDelegate`를 적용해서 이동 동작을 표준 이벤트로 처리했습니다.
+- `reorderItems`에서 데이터소스를 먼저 갱신하고 `performBatchUpdates`로 화면 이동을 동기화했습니다.
+- POST 요청 직전에 `enumerated()` 기반으로 `sequence`를 재생성해서 최종 순서를 payload에 반영했습니다.
+
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant CV as CollectionView
+  participant VC as ViewController
+  participant VM as ViewModel
+  participant API as Request Payload
+
+  U->>CV: 장소 셀 Drag
+  CV->>VC: performDropWith(...)
+  VC->>VM: reorderItems(source, destination)
+  VM->>VM: dataSource 재정렬
+  VC->>CV: moveItem(...) 반영
+  VC->>API: sequence 재생성 후 전송
+```
+
+> 사용자가 변경한 장소 순서가 컬렉션 뷰와 요청 payload의 `sequence`에 함께 반영되도록 맞췄습니다.
+
+### 3. 이미지 선택/썸네일/업로드 최적화(Image Pipeline) - 최대 10장, 압축 0.6
+코스 등록에서 다중 이미지 선택 시 선택 순서가 바뀌거나 payload가 과도하게 커지면 등록 경험이 불안정해지기 때문에, 선택 순서 보존과 대표 이미지 지정, 업로드 크기 제어를 동시에 처리해야 했습니다.
+
+**해결 방향:**
+- `PHPickerConfiguration`에서 `selectionLimit = 10`, `selection = .ordered`를 적용해서 선택 상한과 순서를 고정했습니다.
+- `selectedAssetIdentifiers`를 기준으로 이미지 배열을 재구성해서 표시 순서와 선택 순서를 일치시켰습니다.
+- `AddCourseTargetType`의 multipart 업로드에서 `jpegData(compressionQuality: 0.6)`와 `thumbnailIndex`를 함께 전송했습니다.
+
+| 관점 | 적용 전 | 적용 후 |
+| --- | --- | --- |
+| 이미지 순서 | 선택 순서 불일치 가능 | `selection = .ordered` + `selectedAssetIdentifiers`로 순서 고정 |
+| 대표 이미지 | 별도 식별 없음 | `thumbnailIndex`로 대표 이미지 명시 |
+| 업로드 데이터 | 원본 크기 의존 | `jpegData(0.6)`로 multipart 데이터 크기 최적화 |
+
+> 최대 10장 이미지 선택, 대표 이미지 1장 지정, JPEG 압축 품질 0.6 기준 업로드 흐름으로 정리했습니다.
+
+## 프로젝트 구조
+
+```text
+DATEROAD-iOS/
+├─ Presentation/AddCourse, Presentation/AddSchedule
+├─ Network/AddCourse, Network/AddSchedule, Network/Base
+└─ Global/{UIComponents, Utils/ObservablePattern.swift, Protocols/Serviceable.swift}
+```
